@@ -1,15 +1,70 @@
 @import "tailwindcss";
 
-* {
-  box-sizing: border-box;
+/* ========================================
+   テーマ設定用のCSS変数
+   - Tailwindのユーティリティだけでは表現できない
+     「ライト/ダーク2系統＋OS設定追従」の値定義のため、
+     グローバルCSSとして維持
+   ======================================== */
+:root {
+  /* ライトモード（デフォルト） */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --accent-color: #4f46e5;
+  --border-color: #e5e7eb;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --header-border: #e5e7eb;
 }
 
-html,
-body,
-#root {
-  min-height: 100dvh;
+/* ダークモード（手動切替の最終優先） */
+:root[data-theme='dark'] {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --accent-color: #6366f1;
+  --border-color: #374151;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+  --header-bg: rgba(17, 24, 39, 0.8);
+  --header-border: #374151;
+}
+
+/* OS設定（手動未指定時の初期値） */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']):not([data-theme='dark']) {
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --accent-color: #6366f1;
+    --border-color: #374151;
+    --shadow-color: rgba(0, 0, 0, 0.25);
+    --header-bg: rgba(17, 24, 39, 0.8);
+    --header-border: #374151;
+  }
+}
+
+/* テーマ切替時のズレ（タイムラグ）対策：一時的に全トランジション無効化
+   - JS（useTheme）から付与/解除するクラスのため、Tailwindユーティリティでは表現不可 */
+.no-theme-transition,
+.no-theme-transition *,
+.no-theme-transition *::before,
+.no-theme-transition *::after {
+  transition: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  font-family: 'Inter', 'Noto Sans JP', sans-serif;
   margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
