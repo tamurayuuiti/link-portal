@@ -13,10 +13,17 @@
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --accent-color: #4f46e5;
+  --accent-color-soft: rgba(79, 70, 229, 0.12);
   --border-color: #e5e7eb;
-  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(17, 24, 39, 0.08);
+  --shadow-color-hover: rgba(17, 24, 39, 0.14);
   --header-bg: rgba(255, 255, 255, 0.8);
   --header-border: #e5e7eb;
+
+  /* 共通モーション・トークン */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 180ms;
+  --duration-base: 260ms;
 }
 
 /* ダークモード（手動切替の最終優先） */
@@ -26,8 +33,10 @@
   --text-primary: #f9fafb;
   --text-secondary: #9ca3af;
   --accent-color: #6366f1;
+  --accent-color-soft: rgba(99, 102, 241, 0.16);
   --border-color: #374151;
-  --shadow-color: rgba(0, 0, 0, 0.25);
+  --shadow-color: rgba(0, 0, 0, 0.35);
+  --shadow-color-hover: rgba(0, 0, 0, 0.5);
   --header-bg: rgba(17, 24, 39, 0.8);
   --header-border: #374151;
 }
@@ -40,8 +49,10 @@
     --text-primary: #f9fafb;
     --text-secondary: #9ca3af;
     --accent-color: #6366f1;
+    --accent-color-soft: rgba(99, 102, 241, 0.16);
     --border-color: #374151;
-    --shadow-color: rgba(0, 0, 0, 0.25);
+    --shadow-color: rgba(0, 0, 0, 0.35);
+    --shadow-color-hover: rgba(0, 0, 0, 0.5);
     --header-bg: rgba(17, 24, 39, 0.8);
     --header-border: #374151;
   }
@@ -66,5 +77,88 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
+}
+
+/* ========================================
+   リンクカード
+   - hoverで「押せる/選べる」ことが直感的に伝わるよう、
+     浮き上がり・影・アイコンの微反応を一体で設計
+   - focus-visible はキーボード操作のアクセシビリティ確保のため必須
+   ======================================== */
+.link-card {
+  box-shadow: 0 1px 2px var(--shadow-color);
+  transition:
+    transform var(--duration-base) var(--ease-smooth),
+    box-shadow var(--duration-base) var(--ease-smooth),
+    border-color var(--duration-base) var(--ease-smooth),
+    background-color var(--duration-base) ease;
+}
+
+.link-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  border-color: var(--accent-color);
+  box-shadow: 0 16px 32px -8px var(--shadow-color-hover);
+}
+
+.link-card:active {
+  transform: translateY(-1px) scale(1.005);
+  transition-duration: var(--duration-fast);
+}
+
+.link-card:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 3px;
+}
+
+.link-card-icon {
+  transition:
+    transform var(--duration-base) var(--ease-smooth),
+    color var(--duration-base) ease;
+}
+
+.link-card:hover .link-card-icon {
+  transform: scale(1.1);
+  color: var(--accent-color);
+}
+
+/* ========================================
+   テーマ切替ボタン
+   - hover/active/focus の状態を統一トーンで設計
+   ======================================== */
+.theme-toggle {
+  transition:
+    transform var(--duration-fast) var(--ease-smooth),
+    background-color var(--duration-base) ease,
+    border-color var(--duration-base) ease,
+    box-shadow var(--duration-base) ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent-color);
+  background-color: var(--accent-color-soft);
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   アクセシビリティ：モーション低減設定への配慮
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  .link-card,
+  .link-card-icon,
+  .theme-toggle {
+    transition: none !important;
+  }
+
+  .link-card:hover {
+    transform: none;
+  }
 }
