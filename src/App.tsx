@@ -1,90 +1,14 @@
-import { useState, useEffect, useCallback, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
+import { useTheme } from './hooks/useTheme';
 
 /* ========================================
    型定義
    ======================================== */
-type Theme = 'light' | 'dark';
-
 interface ProjectLink {
   href: string;
   icon: ReactNode;
   title: string;
   description: string;
-}
-
-/* ========================================
-   テーマ管理フック
-   - localStorage('theme') を保存先として維持
-   - OS設定（prefers-color-scheme）をユーザー未指定時の初期値として維持
-   - テーマ切替時の一時的なトランジション無効化（ズレ対策）を維持
-   ======================================== */
-function getSystemTheme(): Theme {
-  if (typeof window === 'undefined' || !window.matchMedia) return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-function getInitialTheme(): Theme {
-  try {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light' || saved === 'dark') return saved;
-  } catch {
-    /* localStorage不可時は無視 */
-  }
-  return getSystemTheme();
-}
-
-function useTheme(): [Theme, () => void] {
-  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
-
-  // テーマ適用：data-theme属性の更新 + 一時的なトランジション無効化（ズレ対策）
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.add('no-theme-transition');
-    root.setAttribute('data-theme', theme);
-    try {
-      localStorage.setItem('theme', theme);
-    } catch {
-      /* 保存できない環境では無視 */
-    }
-    // 2フレーム後に解除（Safari等でも安定）
-    const raf1 = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        root.classList.remove('no-theme-transition');
-      });
-    });
-    return () => cancelAnimationFrame(raf1);
-  }, [theme]);
-
-  // OS設定の変更を反映（ユーザーが手動で選択していない場合のみ）
-  useEffect(() => {
-    if (!window.matchMedia) return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = (e: MediaQueryListEvent) => {
-      let saved: string | null = null;
-      try {
-        saved = localStorage.getItem('theme');
-      } catch {
-        /* 無視 */
-      }
-      if (!saved) {
-        setTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-    if (mq.addEventListener) {
-      mq.addEventListener('change', handler);
-      return () => mq.removeEventListener('change', handler);
-    } else {
-      // 古いブラウザ向けフォールバック
-      mq.addListener(handler);
-      return () => mq.removeListener(handler);
-    }
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
-  }, []);
-
-  return [theme, toggleTheme];
 }
 
 /* ========================================
