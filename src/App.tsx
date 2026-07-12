@@ -1,6 +1,7 @@
 import { Code2, Sun, Moon } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { PROJECT_LINKS } from './data/projectLinks';
+import { LinkCard } from './components/LinkCard';
 
 /* ========================================
    App本体
@@ -43,9 +44,7 @@ function App() {
               このサイトについて
             </h2>
             <p className="mx-auto max-w-175 text-center text-(--text-secondary)">
-              このページは、頻繁に利用する外部サービスや自作サイトへ素早く移動するための
-              「入口」をまとめたポータルです。目的のサイトに最短でアクセスできるよう、
-              余計な装飾を抑え、リンク導線に特化しています。
+              自作Webアプリへ素早くアクセスできるポータルサイトです。
             </p>
           </section>
 
@@ -54,32 +53,15 @@ function App() {
               リンク集
             </h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {PROJECT_LINKS.map(({ href, Icon, title, description }) => (
-                <a
-                  key={title}
-                  href={href}
-                  target={href.startsWith('http') ? '_blank' : undefined}
-                  rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="link-card group flex flex-col overflow-hidden rounded-2xl border border-(--border-color) bg-(--bg-primary) no-underline"
-                >
-                  <div className="flex h-40 items-center justify-center border-b border-(--border-color) bg-(--bg-secondary)">
-                    <Icon
-                      className="link-card-icon h-12 w-12 text-(--text-secondary)"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-                  <div className="flex grow flex-col gap-2 p-6">
-                    <h3 className="text-xl font-bold text-(--accent-color)">{title}</h3>
-                    <p className="grow text-(--text-secondary)">{description}</p>
-                  </div>
-                </a>
+              {PROJECT_LINKS.map((link) => (
+                <LinkCard key={link.title} {...link} />
               ))}
             </div>
           </section>
         </main>
 
         <footer className="px-6 py-8 text-center text-(--text-secondary)">
-          <p>&copy; 2024 ポータルサイト. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} リンクポータル</p>
         </footer>
       </div>
     </>
