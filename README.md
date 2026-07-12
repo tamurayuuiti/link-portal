@@ -1,8 +1,8 @@
-# react-template
+# リンクポータル
 
-個人開発向けの React テンプレートリポジトリです。
+自作Webアプリへ素早くアクセスするための、個人向けリンクポータルサイトです。
 
-React + TypeScript + Vite + Tailwind CSS v4 をベースに、軽量かつ拡張しやすい構成を提供します。
+このプロジェクトは、複数の開発プロジェクトを一覧し、カード形式で見やすく表示するためのシンプルな React アプリケーションです。ライト/ダークテーマの切り替えにも対応しています。
 
 ---
 
@@ -11,7 +11,8 @@ React + TypeScript + Vite + Tailwind CSS v4 をベースに、軽量かつ拡張
 - React
 - TypeScript
 - Vite
-- Tailwind CSS v4
+- Tailwind CSS
+- lucide-react
 - ESLint
 
 ---
@@ -19,34 +20,37 @@ React + TypeScript + Vite + Tailwind CSS v4 をベースに、軽量かつ拡張
 ## ディレクトリ構成
 
 ```text
-src/
-├── components/   # UIコンポーネント
-├── lib/          # 共通処理・ユーティリティ
-````
-
-※必要に応じて以下を追加可能
-
-* pages/
-* layouts/
+link-portal/
+├── src/
+│   ├── components/       # UIコンポーネント
+│   ├── data/             # リンク集データ
+│   ├── hooks/            # テーマ管理用カスタムフック
+│   ├── utils/            # localStorage・テーマ関連ユーティリティ
+│   ├── App.tsx           # アプリ本体のレイアウト
+│   ├── main.tsx          # エントリーポイント
+│   └── index.css         # グローバルスタイル
+├── package.json
+├── vite.config.ts
+└── README.md
+```
 
 ---
 
 ## セットアップ
 
-### 1. テンプレートから作成
-
-GitHub の "Use this template" を使用して新規リポジトリを作成します。
-
-### 2. クローン
+### 1. 依存関係のインストール
 
 ```bash
-git clone <repository-url>
-cd <project-name>
 npm install
+```
+
+### 2. 開発サーバの起動
+
+```bash
 npm run dev
 ```
 
-デフォルト：
+デフォルトでは以下の URL で表示されます。
 
 ```text
 http://localhost:5173
@@ -60,28 +64,31 @@ http://localhost:5173
 npm run build
 ```
 
-出力先：
-
-```text
-dist/
-```
+ビルド成果物は `dist/` 配下に出力されます。
 
 ---
 
-## デプロイ
+## 主な機能
 
-Vercel などの静的ホスティングサービスに対応しています。
-
-GitHub と連携することで、自動ビルド・自動デプロイが可能です。
+- 自作Webアプリのリンクをカード形式で一覧表示
+- 外部リンクを新しいタブで開く
+- ライト/ダークテーマを切り替え可能
+- OS の配色設定に合わせた初期テーマを適用
+- テーマ設定をブラウザに保存して次回起動時にも反映
 
 ---
 
-## 開発メモ
+## 動作フロー
 
-* パスエイリアス `@` を利用する
-* 共通処理は `src/lib` に集約する
-* UI コンポーネントは `src/components` に配置する
-* 依存関係は必要最小限に保つ
-* ビルド成果物（`dist/`）は直接編集しない
-* archive/ は旧コードや実験的実装の退避に使用する
-* notes/ は設計メモ・思考ログに使用する
+1. アプリ起動時にテーマ設定を読み込む
+2. `src/data/projectLinks.ts` のリンク情報を取得する
+3. 各リンクをカードとして画面に表示する
+4. ユーザーがリンクまたはテーマ切替ボタンを操作すると、対応する動作を実行する
+
+---
+
+## 技術・アルゴリズム・仕様
+
+- リンク情報は `src/data/projectLinks.ts` に集約しており、追加・編集が容易な構成です。
+- テーマは `localStorage` と `prefers-color-scheme` を利用して管理しています。
+- 外部リンクは `http` で始まる URL を判定し、別タブで開くようにしています。
